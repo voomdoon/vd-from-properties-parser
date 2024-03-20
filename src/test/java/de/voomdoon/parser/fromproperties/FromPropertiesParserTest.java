@@ -17,6 +17,7 @@ import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicFieldTestOb
 import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicSetterTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.StringTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.EnumListTestObject;
+import de.voomdoon.parser.fromproperties.testobjects.collection.EnumListTestObjectWithSetter;
 import de.voomdoon.parser.fromproperties.testobjects.collection.ObjectListTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.StringListTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.StringListTestObjectWithSetter;
@@ -24,6 +25,7 @@ import de.voomdoon.parser.fromproperties.testobjects.common.ClassAnyTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.common.ClassSpecificTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.common.EnumTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.inheritance.InterfaceTestObject;
+import de.voomdoon.parser.fromproperties.testobjects.map.Enum_Enum_MapTestObjectWithSetter;
 import de.voomdoon.parser.fromproperties.testobjects.map.Object_String_MapTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.map.String_Object_MapTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.map.String_String_MapTestObject;
@@ -109,6 +111,23 @@ class FromPropertiesParserTest {
 						""");
 
 				assertThat(object.list).containsExactly(LogLevel.DEBUG, LogLevel.INFO);
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_List_enum_setter() throws Exception {
+				logTestStart();
+
+				EnumListTestObjectWithSetter object = new EnumListTestObjectWithSetter();
+
+				parseProperties(object, """
+						list.0=DEBUG
+						list.1=INFO
+						""");
+
+				assertThat(object.getList()).containsExactly(LogLevel.DEBUG, LogLevel.INFO);
 			}
 
 			/**
@@ -313,6 +332,39 @@ class FromPropertiesParserTest {
 		 */
 		@Nested
 		class MapTest extends TestBase {
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_Enum_Enum_setter_inline() throws Exception {
+				logTestStart();
+
+				Enum_Enum_MapTestObjectWithSetter object = new Enum_Enum_MapTestObjectWithSetter();
+
+				parseProperties(object, """
+						map.DEBUG=INFO
+						""");
+
+				assertThat(object.getMap()).containsEntry(LogLevel.DEBUG, LogLevel.INFO);
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_Enum_Enum_setter_keyValue() throws Exception {
+				logTestStart();
+
+				Enum_Enum_MapTestObjectWithSetter object = new Enum_Enum_MapTestObjectWithSetter();
+
+				parseProperties(object, """
+						map.0.key=DEBUG
+						map.0.value=INFO
+						""");
+
+				assertThat(object.getMap()).containsEntry(LogLevel.DEBUG, LogLevel.INFO);
+			}
 
 			/**
 			 * @since 0.1.0

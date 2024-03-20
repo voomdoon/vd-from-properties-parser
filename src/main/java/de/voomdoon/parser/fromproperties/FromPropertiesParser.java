@@ -155,7 +155,7 @@ public class FromPropertiesParser {
 			log(LogLevel.DEBUG, indentation, "• processing collection element");
 			maybeLogProperties(context.properties, indentation + 1);
 			Object value = getObject(context, key, targetType, indentation + 2);
-			log(LogLevel.DEBUG, indentation + 2, "value: " + quote(value));
+			log(LogLevel.DEBUG, indentation + 2, "value: " + quote(value) + " for " + targetType);
 			result.add(value);
 		}
 	}
@@ -431,23 +431,29 @@ public class FromPropertiesParser {
 				int indentation, Map<Object, Object> result) throws ParseException {
 			log(LogLevel.DEBUG, indentation, "• processing map element index @ " + key);
 
-			Object valueResult = context.properties.get(key);
-			log(LogLevel.DEBUG, indentation + 1, "value for '" + key + "': " + quote(valueResult));
+			Object value = context.properties.get(key);
+			log(LogLevel.DEBUG, indentation + 1, "value for '" + key + "': " + quote(value));
 
-			if (valueResult != null) {
-				result.put(key, valueResult);
+			Object keyResult;
+			Object valueResult;
+
+			if (value != null) {
+				keyResult = convert(keyTargetType, key, "key");
+				valueResult = convert(valueTargetType, value, "value");
+
+				result.put(keyResult, valueResult);
 			} else {
-				Object keyResult = getObject(context.getContext(key, indentation + 1), "key", keyTargetType,
-						indentation + 1);
-				log(LogLevel.DEBUG, indentation + 1, "key: " + quote(keyResult));
+				keyResult = getObject(context.getContext(key, indentation + 1), "key", keyTargetType, indentation + 1);
 
 				valueResult = getObject(context.getContext(key, indentation + 1), "value", valueTargetType,
 						indentation + 1);
-				log(LogLevel.DEBUG, indentation + 1, "value: " + quote(valueResult));
+			}
 
-				if (keyResult != null && valueResult != null) {
-					result.put(keyResult, valueResult);
-				}
+			log(LogLevel.DEBUG, indentation + 1, "key: " + keyResult);
+			log(LogLevel.DEBUG, indentation + 1, "value: " + valueResult);
+
+			if (keyResult != null && valueResult != null) {
+				result.put(keyResult, valueResult);
 			}
 		}
 	}
@@ -610,7 +616,7 @@ public class FromPropertiesParser {
 		 */
 		@Override
 		protected Type getGenericType(int index) {
-			return setter.getParameterTypes()[0];
+			return ((ParameterizedType) setter.getGenericParameterTypes()[0]).getActualTypeArguments()[index];
 		}
 
 		/**
