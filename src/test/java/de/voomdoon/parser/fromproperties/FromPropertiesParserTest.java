@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Properties;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -248,6 +249,24 @@ class FromPropertiesParserTest {
 				parseProperties(object, "clazz=" + RuntimeException.class.getName());
 
 				assertThat(object.clazz).isEqualTo(RuntimeException.class);
+			}
+
+			/**
+			 * @since DOCME add inception version number
+			 */
+			@Disabled // TODO implement error handling
+			@Test
+			void test_Class_specific_error() throws Exception {
+				logTestStart();
+
+				ClassSpecificTestObject object = new ClassSpecificTestObject();
+
+				String properties = "clazz=" + String.class.getName();
+
+				IllegalArgumentException actual = assertThrows(IllegalArgumentException.class,
+						() -> parseProperties(object, properties));
+
+				assertThat(actual).hasMessageContainingAll(Error.class.getName(), String.class.getName());
 			}
 
 			/**
