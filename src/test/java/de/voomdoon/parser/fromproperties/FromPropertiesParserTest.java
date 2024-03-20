@@ -1,6 +1,7 @@
 package de.voomdoon.parser.fromproperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -19,6 +20,7 @@ import de.voomdoon.parser.fromproperties.testobjects.collection.EnumListTestObje
 import de.voomdoon.parser.fromproperties.testobjects.collection.ObjectListTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.StringListTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.StringListTestObjectWithSetter;
+import de.voomdoon.parser.fromproperties.testobjects.common.EnumTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.inheritance.InterfaceTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.map.Object_String_MapTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.map.String_Object_MapTestObject;
@@ -91,7 +93,7 @@ class FromPropertiesParserTest {
 		class CollectionTest extends TestBase {
 
 			/**
-			 * @since DOCME add inception version number
+			 * @since 0.1.0
 			 */
 			@Test
 			void test_List_enum() throws Exception {
@@ -188,6 +190,41 @@ class FromPropertiesParserTest {
 						""");
 
 				assertThat(object.list).containsExactly("0", "1", "2", "3");
+			}
+		}
+
+		@Nested
+		class CommonTest extends TestBase {
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_enum() throws Exception {
+				logTestStart();
+
+				EnumTestObject object = new EnumTestObject();
+
+				parseProperties(object, "logLevel=DEBUG");
+
+				assertThat(object.logLevel).isEqualTo(LogLevel.DEBUG);
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_enum_error() throws Exception {
+				logTestStart();
+
+				EnumTestObject object = new EnumTestObject();
+
+				ParseException actual = assertThrows(ParseException.class,
+						() -> parseProperties(object, "logLevel=garbage"));
+
+				logger.debug("expected error: " + actual.getMessage());
+
+				assertThat(actual).hasMessageContainingAll("logLevel", "garbage");
 			}
 		}
 
@@ -330,6 +367,23 @@ class FromPropertiesParserTest {
 			 * @since 0.1.0
 			 */
 			@Test
+			void test_integer_error() throws Exception {
+				logTestStart();
+
+				PrimitivesPublicFieldTestObject object = new PrimitivesPublicFieldTestObject();
+
+				NumberFormatException actual = assertThrows(NumberFormatException.class,
+						() -> parseProperties(object, "integer=abc"));
+
+				logger.debug("expected error: " + actual.getMessage());
+
+				assertThat(actual).hasMessageContainingAll("integer", "abc");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
 			void test_string() throws Exception {
 				logTestStart();
 
@@ -434,9 +488,10 @@ class FromPropertiesParserTest {
 		 * 
 		 * @param object
 		 * @param properties
+		 * @throws ParseException
 		 * @since 0.1.0
 		 */
-		protected void parseProperties(Object object, String properties) {
+		protected void parseProperties(Object object, String properties) throws ParseException {
 			Properties p = new Properties();
 
 			try {
@@ -446,12 +501,7 @@ class FromPropertiesParserTest {
 				throw new RuntimeException("Error at 'parseProperties': " + e.getMessage(), e);
 			}
 
-			try {
-				parser.parse(object, p);
-			} catch (ParseException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'parseProperties': " + e.getMessage(), e);
-			}
+			parser.parse(object, p);
 		}
 	}
 }

@@ -155,7 +155,7 @@ public class FromPropertiesParser {
 			log(LogLevel.DEBUG, indentation, "• processing collection element");
 			maybeLogProperties(context.properties, indentation + 1);
 			Object value = getObject(context, key, targetType, indentation + 2);
-			log(LogLevel.DEBUG, indentation + 2, "value: " + quote(value) + " for " + targetType);
+			log(LogLevel.DEBUG, indentation + 2, "value: " + quote(value));
 			result.add(value);
 		}
 	}
@@ -335,7 +335,7 @@ public class FromPropertiesParser {
 			Object v;
 
 			try {
-				v = convert(field.getType(), value, "TODO");
+				v = objectParser.parse(field.getType(), value.toString());
 			} catch (UnsupportedOperationException e) {
 				v = value;
 			}
@@ -431,29 +431,23 @@ public class FromPropertiesParser {
 				int indentation, Map<Object, Object> result) throws ParseException {
 			log(LogLevel.DEBUG, indentation, "• processing map element index @ " + key);
 
-			Object value = context.properties.get(key);
-			log(LogLevel.DEBUG, indentation + 1, "value for '" + key + "': " + quote(value));
+			Object valueResult = context.properties.get(key);
+			log(LogLevel.DEBUG, indentation + 1, "value for '" + key + "': " + quote(valueResult));
 
-			Object keyResult;
-			Object valueResult;
-
-			if (value != null) {
-				keyResult = convert(keyTargetType, key, "key");
-				valueResult = convert(valueTargetType, value, "value");
-
-				result.put(keyResult, valueResult);
+			if (valueResult != null) {
+				result.put(key, valueResult);
 			} else {
-				keyResult = getObject(context.getContext(key, indentation + 1), "key", keyTargetType, indentation + 1);
+				Object keyResult = getObject(context.getContext(key, indentation + 1), "key", keyTargetType,
+						indentation + 1);
+				log(LogLevel.DEBUG, indentation + 1, "key: " + quote(keyResult));
 
 				valueResult = getObject(context.getContext(key, indentation + 1), "value", valueTargetType,
 						indentation + 1);
-			}
+				log(LogLevel.DEBUG, indentation + 1, "value: " + quote(valueResult));
 
-			log(LogLevel.DEBUG, indentation + 1, "key: " + keyResult);
-			log(LogLevel.DEBUG, indentation + 1, "value: " + valueResult);
-
-			if (keyResult != null && valueResult != null) {
-				result.put(keyResult, valueResult);
+				if (keyResult != null && valueResult != null) {
+					result.put(keyResult, valueResult);
+				}
 			}
 		}
 	}
@@ -616,7 +610,7 @@ public class FromPropertiesParser {
 		 */
 		@Override
 		protected Type getGenericType(int index) {
-			return ((ParameterizedType) setter.getGenericParameterTypes()[0]).getActualTypeArguments()[index];
+			return setter.getParameterTypes()[0];
 		}
 
 		/**
@@ -746,8 +740,7 @@ public class FromPropertiesParser {
 	 * @since 0.1.0
 	 */
 	private Object convert(Type type, Object value, String key) throws ParseException {
-		if (type.equals(value.getClass())//
-				|| type.equals(List.class)) {
+		if (type.equals(List.class)) {
 			return value;
 		}
 
@@ -758,8 +751,6 @@ public class FromPropertiesParser {
 		} catch (ParseException e) {
 			throw new ParseException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!",
 					e.getErrorOffset());
-		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!");
 		}
 	}
 
