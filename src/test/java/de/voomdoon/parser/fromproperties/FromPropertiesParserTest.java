@@ -20,6 +20,8 @@ import de.voomdoon.parser.fromproperties.testobjects.collection.EnumListTestObje
 import de.voomdoon.parser.fromproperties.testobjects.collection.ObjectListTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.StringListTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.StringListTestObjectWithSetter;
+import de.voomdoon.parser.fromproperties.testobjects.common.ClassAnyTestObject;
+import de.voomdoon.parser.fromproperties.testobjects.common.ClassSpecificTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.common.EnumTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.inheritance.InterfaceTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.map.Object_String_MapTestObject;
@@ -193,8 +195,41 @@ class FromPropertiesParserTest {
 			}
 		}
 
+		/**
+		 * @author André Schulz
+		 *
+		 * @since 0.1.0
+		 */
 		@Nested
 		class CommonTest extends TestBase {
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_Class_any() throws Exception {
+				logTestStart();
+
+				ClassAnyTestObject object = new ClassAnyTestObject();
+
+				parseProperties(object, "clazz=" + String.class.getName());
+
+				assertThat(object.clazz).isEqualTo(String.class);
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_Class_specific() throws Exception {
+				logTestStart();
+
+				ClassSpecificTestObject object = new ClassSpecificTestObject();
+
+				parseProperties(object, "clazz=" + RuntimeException.class.getName());
+
+				assertThat(object.clazz).isEqualTo(RuntimeException.class);
+			}
 
 			/**
 			 * @since 0.1.0
@@ -502,6 +537,8 @@ class FromPropertiesParserTest {
 			}
 
 			parser.parse(object, p);
+
+			logger.debug("parsed: " + object);
 		}
 	}
 }

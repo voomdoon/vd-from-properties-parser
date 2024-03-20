@@ -335,7 +335,7 @@ public class FromPropertiesParser {
 			Object v;
 
 			try {
-				v = objectParser.parse(field.getType(), value.toString());
+				v = convert(field.getType(), value, "TODO");
 			} catch (UnsupportedOperationException e) {
 				v = value;
 			}
@@ -740,7 +740,8 @@ public class FromPropertiesParser {
 	 * @since 0.1.0
 	 */
 	private Object convert(Type type, Object value, String key) throws ParseException {
-		if (type.equals(List.class)) {
+		if (type.equals(value.getClass())//
+				|| type.equals(List.class)) {
 			return value;
 		}
 
@@ -751,6 +752,8 @@ public class FromPropertiesParser {
 		} catch (ParseException e) {
 			throw new ParseException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!",
 					e.getErrorOffset());
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!");
 		}
 	}
 
