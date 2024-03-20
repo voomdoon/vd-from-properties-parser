@@ -1,0 +1,1 @@
+# vd-from-properties-parser
