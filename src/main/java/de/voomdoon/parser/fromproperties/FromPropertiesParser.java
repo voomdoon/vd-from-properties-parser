@@ -19,7 +19,7 @@ import java.util.Properties;
 import de.voomdoon.logging.LogLevel;
 import de.voomdoon.logging.LogManager;
 import de.voomdoon.logging.Logger;
-import de.voomdoon.parser.fromstring.FromStringParser;
+import de.voomdoon.parser.fromstring.FromStringParsers;
 
 /**
  * DOCME add JavaDoc for
@@ -703,7 +703,7 @@ public class FromPropertiesParser {
 	/**
 	 * @since 0.1.0
 	 */
-	private FromStringParser objectParser = new FromStringParser();
+	private FromStringParsers objectParser = new FromStringParsers();
 
 	/**
 	 * @since 0.1.0
