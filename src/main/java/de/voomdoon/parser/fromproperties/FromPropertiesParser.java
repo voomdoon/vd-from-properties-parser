@@ -703,7 +703,7 @@ public class FromPropertiesParser {
 	/**
 	 * @since 0.1.0
 	 */
-	private FromStringParsers objectParser = new FromStringParsers();
+	private FromStringParsers objectParser = FromStringParsers.DEFAULT;
 
 	/**
 	 * @since 0.1.0
