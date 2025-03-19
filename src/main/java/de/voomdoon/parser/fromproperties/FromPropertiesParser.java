@@ -98,7 +98,9 @@ public class FromPropertiesParser {
 		 * @throws ParseException
 		 * @since 0.1.0
 		 */
-		private Collection<?> parseCollection(String string, Type targetType, int indentation) throws ParseException {
+		private Collection<?> parseInlineCollection(String string, Type targetType, int indentation)
+				throws ParseException {
+			log(LogLevel.DEBUG, indentation, "parsing inline collection from '" + string + "'");
 			Collection<Object> result = new ArrayList<>();
 			String[] elements = string.split(",");
 
@@ -133,7 +135,7 @@ public class FromPropertiesParser {
 				Collection<?> collection = getCollection(subContext, targetType, indentation + 1);
 				accessor.setValue(object, collection);
 			} else if (context.properties.getProperty(accessor.getName()) != null) {
-				Collection<?> collection = parseCollection(context.properties.getProperty(accessor.getName()),
+				Collection<?> collection = parseInlineCollection(context.properties.getProperty(accessor.getName()),
 						targetType, indentation + 1);
 				accessor.setValue(object, collection);
 			}

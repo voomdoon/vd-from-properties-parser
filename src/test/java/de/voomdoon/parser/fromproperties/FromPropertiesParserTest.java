@@ -370,9 +370,8 @@ class FromPropertiesParserTest {
 
 				List<LogEvent> logs = getLogCache().getLogEvents();
 
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
-						.contains(
-								"• processing accessor 'string': FieldAccessor(name: string, type: class java.lang.String)");
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim)).contains(
+						"• processing accessor 'string': FieldAccessor(name: string, type: class java.lang.String)");
 			}
 
 			/**
@@ -388,9 +387,8 @@ class FromPropertiesParserTest {
 
 				List<LogEvent> logs = getLogCache().getLogEvents();
 
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
-						.contains(
-								"• processing accessor 'string': SetterAccessor(name: string, type: class java.lang.String)");
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim)).contains(
+						"• processing accessor 'string': SetterAccessor(name: string, type: class java.lang.String)");
 			}
 
 			/**
@@ -406,7 +404,7 @@ class FromPropertiesParserTest {
 
 				List<LogEvent> logs = getLogCache().getLogEvents();
 
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim))
 						.contains("value: 'abc' @ string (object.string)");
 			}
 
@@ -434,6 +432,53 @@ class FromPropertiesParserTest {
 						assertThat(childIndentation).isEqualTo(rootIndentation + 3 * 4);
 					}
 				}
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_indentation_collection() throws Exception {
+				logTestStart();
+
+				EnumListTestObject object = new EnumListTestObject();
+
+				parseProperties(object, """
+						list.0=DEBUG
+						list.1=INFO
+						""");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(//
+						"        processing collection accessor FieldAccessor(name: list, type: interface java.util.List)", //
+						"            element target type: class de.voomdoon.logging.LogLevel", //
+						"            getSubProperties @ list (list)", //
+						"            properties:\n                0=DEBUG\n                1=INFO", //
+						"            getCollection class de.voomdoon.logging.LogLevel", //
+						"                sub-keys: [0, 1]", //
+						"            • processing collection element", //
+						"                properties:\n                    0=DEBUG\n                    1=INFO",
+						"                        value: 'DEBUG' @ 0 (list.0)", //
+						"                    value: 'DEBUG' for class de.voomdoon.logging.LogLevel");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_indentation_collection_inline() throws Exception {
+				logTestStart();
+
+				EnumListTestObject object = new EnumListTestObject();
+
+				parseProperties(object, "list=DEBUG,INFO");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(//
+						"        processing collection accessor FieldAccessor(name: list, type: interface java.util.List)", //
+						"            parsing inline collection from 'DEBUG,INFO'");
 			}
 		}
 
