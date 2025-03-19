@@ -132,7 +132,7 @@ public class FromPropertiesParser {
 			if (!subContext.properties.isEmpty()) {
 				Collection<?> collection = getCollection(subContext, targetType, indentation + 1);
 				accessor.setValue(object, collection);
-			} else if (context.getKey(accessor.getName()) != null) {
+			} else if (context.properties.getProperty(accessor.getName()) != null) {
 				Collection<?> collection = parseCollection(context.properties.getProperty(accessor.getName()),
 						targetType, indentation + 1);
 				accessor.setValue(object, collection);
@@ -197,7 +197,7 @@ public class FromPropertiesParser {
 		 * @since 0.1.0
 		 */
 		public Context getContext(String key, int indentation) {
-			return new Context(getSubProperties(this, key, indentation), getKey(key));
+			return new Context(getSubProperties(this, key, indentation), getFullKey(key));
 		}
 
 		/**
@@ -207,24 +207,12 @@ public class FromPropertiesParser {
 		 * @return
 		 * @since 0.1.0
 		 */
-		public String getKey(String key) {
-			return "";
-			// TESTME
-			// if (keyPrefix != null) {
-			// return keyPrefix + "." + key;
-			// } else {
-			// return key;
-			// }
-		}
-
-		/**
-		 * DOCME add JavaDoc for method getKeyPrefix
-		 * 
-		 * @return
-		 * @since 0.1.0
-		 */
-		public String getKeyPrefix() {
-			return keyPrefix;
+		public String getFullKey(String key) {
+			if (keyPrefix != null) {
+				return keyPrefix + "." + key;
+			} else {
+				return key;
+			}
 		}
 	}
 
@@ -786,17 +774,8 @@ public class FromPropertiesParser {
 	 * @since 0.1.0
 	 */
 	private String getAt(Context context, String key) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("@ ").append(key).append(" (");
-
-		if (context.getKeyPrefix() != null) {
-			sb.append(context.getKeyPrefix()).append(".");
-		}
-
-		sb.append(key).append(")");
-
-		return sb.toString();
+		return new StringBuilder().append("@ ").append(key).append(" (").append(context.getFullKey(key)).append(")")
+				.toString();
 	}
 
 	/**

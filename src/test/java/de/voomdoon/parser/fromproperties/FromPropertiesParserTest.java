@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import de.voomdoon.logging.LogEvent;
 import de.voomdoon.logging.LogLevel;
-import de.voomdoon.parser.fromproperties.FromPropertiesParser;
 import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicFieldTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicSetterTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.StringTestObject;
@@ -381,6 +380,9 @@ class FromPropertiesParserTest {
 						assertThat(childIndentation).isEqualTo(rootIndentation + 3 * 4);
 					}
 				}
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
+						.contains("value: 'abc' @ string (object.string)");
 			}
 		}
 
@@ -550,7 +552,7 @@ class FromPropertiesParserTest {
 		class RecursiveTest extends TestBase {
 
 			/**
-			 * DOCME add JavaDoc for method test
+			 * @since 0.1.0
 			 */
 			@Test
 			void test() throws Exception {
