@@ -17,6 +17,7 @@ import de.voomdoon.logging.LogEvent;
 import de.voomdoon.logging.LogLevel;
 import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicFieldTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicSetterTestObject;
+import de.voomdoon.parser.fromproperties.testobjects.StringSetterTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.StringTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.EnumListTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.collection.EnumListTestObjectWithSetter;
@@ -360,7 +361,60 @@ class FromPropertiesParserTest {
 			 * @since 0.1.0
 			 */
 			@Test
-			void test() throws Exception {
+			void test_accessor_FieldAccessor() throws Exception {
+				logTestStart();
+
+				StringTestObject object = new StringTestObject();
+
+				parseProperties(object, "string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
+						.contains(
+								"• processing accessor 'string': FieldAccessor(name: string, type: class java.lang.String)");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_accessor_SetterAccessor() throws Exception {
+				logTestStart();
+
+				StringSetterTestObject object = new StringSetterTestObject();
+
+				parseProperties(object, "string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
+						.contains(
+								"• processing accessor 'string': SetterAccessor(name: string, type: class java.lang.String)");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_fullKey() throws Exception {
+				logTestStart();
+
+				StringTestObjectTestObject object = new StringTestObjectTestObject();
+
+				parseProperties(object, "object.string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
+						.contains("value: 'abc' @ string (object.string)");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_indentation() throws Exception {
 				logTestStart();
 
 				StringTestObjectTestObject object = new StringTestObjectTestObject();
@@ -380,9 +434,6 @@ class FromPropertiesParserTest {
 						assertThat(childIndentation).isEqualTo(rootIndentation + 3 * 4);
 					}
 				}
-
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim).toList())
-						.contains("value: 'abc' @ string (object.string)");
 			}
 		}
 
@@ -552,7 +603,7 @@ class FromPropertiesParserTest {
 		class RecursiveTest extends TestBase {
 
 			/**
-			 * @since 0.1.0
+			 * DOCME add JavaDoc for method test
 			 */
 			@Test
 			void test() throws Exception {
