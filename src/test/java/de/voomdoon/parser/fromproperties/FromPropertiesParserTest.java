@@ -448,17 +448,10 @@ class FromPropertiesParserTest {
 
 				List<LogEvent> logs = getLogCache().getLogEvents();
 
-				int rootIndentation = -1;
-
-				for (LogEvent log : logs) {
-					if (log.getMessage().toString().contains("processing accessors for StringTestObjectTestObject")) {
-						rootIndentation = log.getMessage().toString().indexOf("○");
-					} else if (log.getMessage().toString().contains("processing accessors for StringTestObject")) {
-						int childIndentation = log.getMessage().toString().indexOf("○");
-
-						assertThat(childIndentation).isEqualTo(rootIndentation + 3 * 4);
-					}
-				}
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"properties:\n    object.string=abc",
+						"○ processing accessors for StringTestObjectTestObject: [object]",
+						"            ○ processing accessors for StringTestObject: [string]");
 			}
 
 			/**
@@ -506,6 +499,42 @@ class FromPropertiesParserTest {
 				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(//
 						"        processing collection accessor FieldAccessor(name: list, type: interface java.util.List)", //
 						"            parsing inline collection from 'DEBUG,INFO'");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_indentation_DataAccessors_field() throws Exception {
+				logTestStart();
+
+				StringTestObject object = new StringTestObject();
+
+				parseProperties(object, "string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"⏷ getDataAccessors class de.voomdoon.parser.fromproperties.testobjects.StringTestObject",
+						"    ⏵ field: public java.lang.String de.voomdoon.parser.fromproperties.testobjects.StringTestObject.string");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_indentation_DataAccessors_method() throws Exception {
+				logTestStart();
+
+				StringSetterTestObject object = new StringSetterTestObject();
+
+				parseProperties(object, "string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"⏷ getDataAccessors class de.voomdoon.parser.fromproperties.testobjects.StringSetterTestObject",
+						"    ⏵ method: public void de.voomdoon.parser.fromproperties.testobjects.StringSetterTestObject.setString(java.lang.String)");
 			}
 		}
 
