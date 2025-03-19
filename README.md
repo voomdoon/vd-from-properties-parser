@@ -96,6 +96,8 @@
     
     ### MyImplementation
     ```js
-    public class MyImplementation implements MyInterface {}
+    public class MyImplementation implements MyInterface {
+        public String string;
+    }
     ```
   </details>
