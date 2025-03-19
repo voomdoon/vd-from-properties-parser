@@ -316,7 +316,7 @@ class FromPropertiesParserTest {
 			 * @since 0.1.0
 			 */
 			@Test
-			void test_inteface_ipmplementationWithoutPackageNameAtSamePackage() throws Exception {
+			void test_inteface_implementationWithoutPackageNameAtSamePackage() throws Exception {
 				logTestStart();
 
 				InterfaceTestObject object = new InterfaceTestObject();
@@ -333,7 +333,7 @@ class FromPropertiesParserTest {
 			 * @since 0.1.0
 			 */
 			@Test
-			void test_inteface_ipmplementationWithPackageName() throws Exception {
+			void test_inteface_implementationWithPackageName() throws Exception {
 				logTestStart();
 
 				InterfaceTestObject object = new InterfaceTestObject();
@@ -406,6 +406,33 @@ class FromPropertiesParserTest {
 
 				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim))
 						.contains("value: 'abc' @ string (object.string)");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_indendation_recursive() throws Exception {
+				logTestStart();
+
+				InterfaceTestObject object = new InterfaceTestObject();
+
+				parseProperties(object, """
+						object.class=TestInterfaceImpl
+						object.string1=abc
+						""");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"        getRecursiveObject interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface",
+						"            getInstance interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface",
+						"                properties:\n                    string1=abc\n                    class=TestInterfaceImpl",
+						"                getClass 'TestInterfaceImpl' (interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface)");
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).filter(m -> m.startsWith(
+						"            instance: de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterfaceImpl")))
+								.hasSize(1);
 			}
 
 			/**
