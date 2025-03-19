@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import de.voomdoon.logging.LogEvent;
 import de.voomdoon.logging.LogLevel;
+import de.voomdoon.parser.fromproperties.FromPropertiesParser;
 import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicFieldTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.PrimitivesPublicSetterTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.StringTestObject;
@@ -31,6 +33,7 @@ import de.voomdoon.parser.fromproperties.testobjects.map.Object_String_MapTestOb
 import de.voomdoon.parser.fromproperties.testobjects.map.String_Object_MapTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.map.String_String_MapTestObject;
 import de.voomdoon.parser.fromproperties.testobjects.recursive.StringTestObjectTestObject;
+import de.voomdoon.testing.logging.tests.LoggingCheckingTestBase;
 
 /**
  * DOCME add JavaDoc for
@@ -252,7 +255,7 @@ class FromPropertiesParserTest {
 			}
 
 			/**
-			 * @since DOCME add inception version number
+			 * @since 0.1.0
 			 */
 			@Disabled // TODO implement error handling
 			@Test
@@ -341,6 +344,43 @@ class FromPropertiesParserTest {
 						""");
 
 				assertThat(object.object.getString()).isEqualTo("abc");
+			}
+		}
+
+		/**
+		 * Test method to test the logging
+		 *
+		 * @author André Schulz
+		 *
+		 * @since 0.1.0
+		 */
+		@Nested
+		class LoggingTest extends TestBase {
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test() throws Exception {
+				logTestStart();
+
+				StringTestObjectTestObject object = new StringTestObjectTestObject();
+
+				parseProperties(object, "object.string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				int rootIndentation = -1;
+
+				for (LogEvent log : logs) {
+					if (log.getMessage().toString().contains("processing accessors for StringTestObjectTestObject")) {
+						rootIndentation = log.getMessage().toString().indexOf("○");
+					} else if (log.getMessage().toString().contains("processing accessors for StringTestObject")) {
+						int childIndentation = log.getMessage().toString().indexOf("○");
+
+						assertThat(childIndentation).isEqualTo(rootIndentation + 3 * 4);
+					}
+				}
 			}
 		}
 
@@ -582,7 +622,7 @@ class FromPropertiesParserTest {
 	 *
 	 * @since 0.1.0
 	 */
-	private abstract class TestBase extends de.voomdoon.testing.tests.TestBase {
+	private abstract class TestBase extends LoggingCheckingTestBase {
 
 		/**
 		 * @since 0.1.0

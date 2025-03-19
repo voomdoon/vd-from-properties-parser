@@ -172,7 +172,7 @@ public class FromPropertiesParser {
 		/**
 		 * @since 0.1.0
 		 */
-		private String keyPrefix;
+		private String keyPrefix;// XXX why is this unused?
 
 		/**
 		 * @since 0.1.0
@@ -208,11 +208,23 @@ public class FromPropertiesParser {
 		 * @since 0.1.0
 		 */
 		public String getKey(String key) {
-			if (keyPrefix != null) {
-				return keyPrefix + "." + key;
-			} else {
-				return key;
-			}
+			return "";
+			// TESTME
+			// if (keyPrefix != null) {
+			// return keyPrefix + "." + key;
+			// } else {
+			// return key;
+			// }
+		}
+
+		/**
+		 * DOCME add JavaDoc for method getKeyPrefix
+		 * 
+		 * @return
+		 * @since 0.1.0
+		 */
+		public String getKeyPrefix() {
+			return keyPrefix;
 		}
 	}
 
@@ -375,7 +387,8 @@ public class FromPropertiesParser {
 		 */
 		private Map<Object, Object> getMap(Context context, Type keyTargetType, Type valueTargetType, String key,
 				int indentation) throws ParseException {
-			log(LogLevel.DEBUG, indentation, "getMap " + keyTargetType + " -> " + valueTargetType + " @ " + key);
+			log(LogLevel.DEBUG, indentation,
+					"getMap " + keyTargetType + " -> " + valueTargetType + " " + getAt(context, key));
 
 			List<String> subKeys = getSubKeys(context.properties);
 			log(LogLevel.DEBUG, indentation + 1, "sub-keys: " + subKeys);
@@ -429,7 +442,7 @@ public class FromPropertiesParser {
 		 */
 		private void processElement(Context context, String key, Type keyTargetType, Type valueTargetType,
 				int indentation, Map<Object, Object> result) throws ParseException {
-			log(LogLevel.DEBUG, indentation, "• processing map element index @ " + key);
+			log(LogLevel.DEBUG, indentation, "• processing map element index " + getAt(context, key));
 
 			Object value = context.properties.get(key);
 			log(LogLevel.DEBUG, indentation + 1, "value for '" + key + "': " + quote(value));
@@ -668,6 +681,7 @@ public class FromPropertiesParser {
 	 * @since 0.1.0
 	 */
 	private static String quote(Object value) {
+		// TESTME
 		if (value != null) {
 			return "'" + value + "'";
 		} else {
@@ -764,6 +778,28 @@ public class FromPropertiesParser {
 	}
 
 	/**
+	 * DOCME add JavaDoc for method getAt
+	 * 
+	 * @param context
+	 * @param key
+	 * @return
+	 * @since 0.1.0
+	 */
+	private String getAt(Context context, String key) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("@ ").append(key).append(" (");
+
+		if (context.getKeyPrefix() != null) {
+			sb.append(context.getKeyPrefix()).append(".");
+		}
+
+		sb.append(key).append(")");
+
+		return sb.toString();
+	}
+
+	/**
 	 * @param clazz
 	 * @return
 	 * @since 0.1.0
@@ -816,7 +852,7 @@ public class FromPropertiesParser {
 	 */
 	private Object getObject(Context context, String key, Type type, int indentation) throws ParseException {
 		Object value = context.properties.get(key);
-		log(LogLevel.TRACE, indentation + 1, "value: " + quote(value) + " @ " + key);
+		log(LogLevel.TRACE, indentation + 1, "value: " + quote(value) + " " + getAt(context, key));
 
 		if (value != null) {
 			return convert(type, value, key);
@@ -860,7 +896,7 @@ public class FromPropertiesParser {
 	 * @since 0.1.0
 	 */
 	private Properties getSubProperties(Context context, String keyPrefix, int indentation) {
-		log(LogLevel.TRACE, indentation, "getSubProperties @ " + keyPrefix);
+		log(LogLevel.TRACE, indentation, "getSubProperties " + getAt(context, keyPrefix));
 
 		Properties result = new Properties();
 
