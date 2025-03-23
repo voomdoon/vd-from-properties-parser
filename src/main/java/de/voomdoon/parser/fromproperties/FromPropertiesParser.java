@@ -70,10 +70,11 @@ public class FromPropertiesParser {
 		 * @param targetType
 		 * @param indentation
 		 * @return
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
-		private Collection<?> getCollection(Context context, Type targetType, int indentation) throws ParseException {
+		private Collection<?> getCollection(Context context, Type targetType, int indentation)
+				throws FromPropertiesParsingException {
 			log(LogLevel.DEBUG, indentation, "getCollection " + targetType);
 
 			List<String> subKeys = getSubKeys(context.properties);
@@ -95,17 +96,23 @@ public class FromPropertiesParser {
 		 * @param targetType
 		 * @param indentation
 		 * @return
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
 		private Collection<?> parseInlineCollection(String string, Type targetType, int indentation)
-				throws ParseException {
+				throws FromPropertiesParsingException {
 			log(LogLevel.DEBUG, indentation, "parsing inline collection from '" + string + "'");
 			Collection<Object> result = new ArrayList<>();
 			String[] elements = string.split(",");
 
 			for (String element : elements) {
-				Object value = objectParser.parse((Class<?>) targetType, element);
+				Object value;
+				try {
+					value = objectParser.parse((Class<?>) targetType, element);
+				} catch (ParseException e) {
+					// TODO implement error handling
+					throw new FromPropertiesParsingException("Error at 'parseInlineCollection': " + e.getMessage(), e);
+				}
 				result.add(value);
 			}
 
@@ -119,11 +126,11 @@ public class FromPropertiesParser {
 		 * @param context
 		 * @param accessor
 		 * @param indentation
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
 		private void processAccessor(Object object, Context context, DataAccessor accessor, int indentation)
-				throws ParseException {
+				throws FromPropertiesParsingException {
 			log(LogLevel.TRACE, indentation, "processing collection accessor " + accessor);
 			Type targetType = accessor.getGenericType(0);
 			log(LogLevel.DEBUG, indentation + 1, "element target type: " + targetType);
@@ -149,11 +156,11 @@ public class FromPropertiesParser {
 		 * @param targetType
 		 * @param indentation
 		 * @param result
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
 		private void processElement(Context context, String key, Type targetType, int indentation,
-				Collection<Object> result) throws ParseException {
+				Collection<Object> result) throws FromPropertiesParsingException {
 			log(LogLevel.DEBUG, indentation, "• processing collection element");
 			maybeLogProperties(context.properties, indentation + 1);
 			Object value = getObject(context, key, targetType, indentation + 2);
@@ -258,10 +265,10 @@ public class FromPropertiesParser {
 		 * 
 		 * @param object
 		 * @param value
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
-		protected abstract void setValue(Object object, Object value) throws ParseException;
+		protected abstract void setValue(Object object, Object value) throws FromPropertiesParsingException;
 	}
 
 	/**
@@ -329,11 +336,11 @@ public class FromPropertiesParser {
 		}
 
 		/**
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
 		@Override
-		protected void setValue(Object object, Object value) throws ParseException {
+		protected void setValue(Object object, Object value) throws FromPropertiesParsingException {
 			Object v;
 
 			try {
@@ -369,11 +376,11 @@ public class FromPropertiesParser {
 		 * @param key
 		 * @param indentation
 		 * @return
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
 		private Map<Object, Object> getMap(Context context, Type keyTargetType, Type valueTargetType, String key,
-				int indentation) throws ParseException {
+				int indentation) throws FromPropertiesParsingException {
 			log(LogLevel.DEBUG, indentation,
 					"getMap " + keyTargetType + " -> " + valueTargetType + " " + getAt(context, key));
 
@@ -396,11 +403,11 @@ public class FromPropertiesParser {
 		 * @param context
 		 * @param accessor
 		 * @param indentation
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
 		private void processAccessor(Object object, Context context, DataAccessor accessor, int indentation)
-				throws ParseException {
+				throws FromPropertiesParsingException {
 			log(LogLevel.TRACE, indentation, "processing map accessor " + accessor);
 			Context subContext = context.getContext(accessor.getName(), indentation + 1);
 			maybeLogProperties(subContext.properties, indentation + 1);
@@ -424,11 +431,11 @@ public class FromPropertiesParser {
 		 * @param indentation
 		 * @param result
 		 * @param subKey2
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
 		private void processElement(Context context, String key, Type keyTargetType, Type valueTargetType,
-				int indentation, Map<Object, Object> result) throws ParseException {
+				int indentation, Map<Object, Object> result) throws FromPropertiesParsingException {
 			log(LogLevel.DEBUG, indentation, "• processing map element index " + getAt(context, key));
 
 			Object inlineValue = context.properties.get(key);
@@ -533,10 +540,11 @@ public class FromPropertiesParser {
 		 * @param type
 		 * @param indentation
 		 * @return
-		 * @throws ParseException
+		 * @throws FromPropertiesParsingException
 		 * @since 0.1.0
 		 */
-		private Object getRecursiveObject(Context context, Type type, int indentation) throws ParseException {
+		private Object getRecursiveObject(Context context, Type type, int indentation)
+				throws FromPropertiesParsingException {
 			log(LogLevel.DEBUG, indentation, "getRecursiveObject " + type);
 			Object result = getInstance(type, context, indentation + 1);
 			log(LogLevel.DEBUG, indentation + 1, "instance: " + result);
@@ -695,10 +703,10 @@ public class FromPropertiesParser {
 	 * 
 	 * @param object
 	 * @param properties
-	 * @throws ParseException
+	 * @throws FromPropertiesParsingException
 	 * @since 0.1.0
 	 */
-	public void parse(Object object, Properties properties) throws ParseException {
+	public void parse(Object object, Properties properties) throws FromPropertiesParsingException {
 		maybeLogProperties(properties, 0);
 
 		parseInternal(object, new Context(properties, null), 0);
@@ -722,10 +730,10 @@ public class FromPropertiesParser {
 	 * @param value
 	 * @param key
 	 * @return
-	 * @throws ParseException
+	 * @throws FromPropertiesParsingException
 	 * @since 0.1.0
 	 */
-	private Object convert(Type type, Object value, String key) throws ParseException {
+	private Object convert(Type type, Object value, String key) throws FromPropertiesParsingException {
 		if (type.equals(value.getClass())//
 				|| type.equals(List.class)) {
 			return value;
@@ -736,8 +744,8 @@ public class FromPropertiesParser {
 		} catch (NumberFormatException e) {
 			throw new NumberFormatException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!");
 		} catch (ParseException e) {
-			throw new ParseException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!",
-					e.getErrorOffset());
+			throw new FromPropertiesParsingException(
+					"Failed to parse " + type + " for '" + key + "' from '" + value + "'!");
 		} catch (ClassCastException e) {
 			throw new IllegalArgumentException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!");
 		}
@@ -804,10 +812,11 @@ public class FromPropertiesParser {
 	 * @param type
 	 * @param indentation
 	 * @return
-	 * @throws ParseException
+	 * @throws FromPropertiesParsingException
 	 * @since 0.1.0
 	 */
-	private Object getObject(Context context, String key, Type type, int indentation) throws ParseException {
+	private Object getObject(Context context, String key, Type type, int indentation)
+			throws FromPropertiesParsingException {
 		Object value = context.properties.get(key);
 		log(LogLevel.TRACE, indentation + 1, "value: " + quote(value) + " " + getAt(context, key));
 
@@ -906,10 +915,10 @@ public class FromPropertiesParser {
 	 * @param object
 	 * @param context
 	 * @param indentation
-	 * @throws ParseException
+	 * @throws FromPropertiesParsingException
 	 * @since 0.1.0
 	 */
-	private void parseInternal(Object object, Context context, int indentation) throws ParseException {
+	private void parseInternal(Object object, Context context, int indentation) throws FromPropertiesParsingException {
 		List<DataAccessor> accessors = getDataAccessors(object);
 		log(LogLevel.TRACE, indentation, "○ processing accessors for " + object.getClass().getSimpleName() + ": "
 				+ accessors.stream().map(DataAccessor::getName).toList());
@@ -926,11 +935,11 @@ public class FromPropertiesParser {
 	 * @param context
 	 * @param accessor
 	 * @param indentation
-	 * @throws ParseException
+	 * @throws FromPropertiesParsingException
 	 * @since 0.1.0
 	 */
 	private void processAccessor(Object object, Context context, DataAccessor accessor, int indentation)
-			throws ParseException {
+			throws FromPropertiesParsingException {
 		log(LogLevel.TRACE, indentation, "• processing accessor '" + accessor.getName() + "': " + accessor);
 
 		if (accessor.getType().equals(List.class)) {
@@ -949,11 +958,11 @@ public class FromPropertiesParser {
 	 * @param context
 	 * @param accessor
 	 * @param indentation
-	 * @throws ParseException
+	 * @throws FromPropertiesParsingException
 	 * @since 0.1.0
 	 */
 	private void processAccessorForObject(Object object, Context context, DataAccessor accessor, int indentation)
-			throws ParseException {
+			throws FromPropertiesParsingException {
 		String key = accessor.getName();
 		Object child = getObject(context, key, accessor.getType(), indentation);
 

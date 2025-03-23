@@ -1,6 +1,7 @@
 package de.voomdoon.parser.fromproperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -295,12 +296,8 @@ class FromPropertiesParserTest {
 
 				EnumTestObject object = new EnumTestObject();
 
-				ParseException actual = assertThrows(ParseException.class,
-						() -> parseProperties(object, "logLevel=garbage"));
-
-				logger.debug("expected error: " + actual.getMessage());
-
-				assertThat(actual).hasMessageContainingAll("logLevel", "garbage");
+				assertThatThrownBy(() -> parseProperties(object, "logLevel=garbage"))
+						.isInstanceOf(FromPropertiesParsingException.class).message().contains("logLevel", "garbage");
 			}
 		}
 
@@ -880,7 +877,7 @@ class FromPropertiesParserTest {
 		 * @throws ParseException
 		 * @since 0.1.0
 		 */
-		protected void parseProperties(Object object, String properties) throws ParseException {
+		protected void parseProperties(Object object, String properties) throws FromPropertiesParsingException {
 			Properties p = new Properties();
 
 			try {
