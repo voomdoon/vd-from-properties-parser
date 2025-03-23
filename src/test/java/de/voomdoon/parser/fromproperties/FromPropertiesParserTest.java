@@ -564,6 +564,42 @@ class FromPropertiesParserTest {
 			}
 
 			/**
+			 * @since DOCME add inception version number
+			 */
+			@Test
+			void test_properties_disabled() throws Exception {
+				logTestStart();
+
+				parser.setDefaultLogLevel(LogLevel.DEBUG);
+
+				StringTestObject object = new StringTestObject();
+
+				parseProperties(object, "string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim))
+						.doesNotContain("properties:\n    string=abc");
+			}
+
+			/**
+			 * @since DOCME add inception version number
+			 */
+			@Test
+			void test_properties_enabled() throws Exception {
+				logTestStart();
+
+				StringTestObject object = new StringTestObject();
+
+				parseProperties(object, "string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim))
+						.contains("properties:\n    string=abc");
+			}
+
+			/**
 			 * @since 0.1.0
 			 */
 			@Test
@@ -834,7 +870,7 @@ class FromPropertiesParserTest {
 		/**
 		 * @since 0.1.0
 		 */
-		private FromPropertiesParser parser = new FromPropertiesParser().setDefaultLogLevel(LogLevel.TRACE);
+		protected FromPropertiesParser parser = new FromPropertiesParser().setDefaultLogLevel(LogLevel.TRACE);
 
 		/**
 		 * DOCME add JavaDoc for method parseProperties
