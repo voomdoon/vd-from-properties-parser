@@ -395,70 +395,7 @@ class FromPropertiesParserTest {
 			 * @since 0.1.0
 			 */
 			@Test
-			void test_fullKey() throws Exception {
-				logTestStart();
-
-				StringTestObjectTestObject object = new StringTestObjectTestObject();
-
-				parseProperties(object, "object.string=abc");
-
-				List<LogEvent> logs = getLogCache().getLogEvents();
-
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim))
-						.contains("value: 'abc' @ string (object.string)");
-			}
-
-			/**
-			 * @since 0.1.0
-			 */
-			@Test
-			void test_indendation_recursive() throws Exception {
-				logTestStart();
-
-				InterfaceTestObject object = new InterfaceTestObject();
-
-				parseProperties(object, """
-						object.class=TestInterfaceImpl
-						object.string1=abc
-						""");
-
-				List<LogEvent> logs = getLogCache().getLogEvents();
-
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
-						"        getRecursiveObject interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface",
-						"            getInstance interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface",
-						"                properties:\n                    string1=abc\n                    class=TestInterfaceImpl",
-						"                getClass 'TestInterfaceImpl' (interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface)");
-
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).filter(m -> m.startsWith(
-						"            instance: de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterfaceImpl")))
-								.hasSize(1);
-			}
-
-			/**
-			 * @since 0.1.0
-			 */
-			@Test
-			void test_indentation() throws Exception {
-				logTestStart();
-
-				StringTestObjectTestObject object = new StringTestObjectTestObject();
-
-				parseProperties(object, "object.string=abc");
-
-				List<LogEvent> logs = getLogCache().getLogEvents();
-
-				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
-						"properties:\n    object.string=abc",
-						"○ processing accessors for StringTestObjectTestObject: [object]",
-						"            ○ processing accessors for StringTestObject: [string]");
-			}
-
-			/**
-			 * @since 0.1.0
-			 */
-			@Test
-			void test_indentation_collection() throws Exception {
+			void test_collection() throws Exception {
 				logTestStart();
 
 				EnumListTestObject object = new EnumListTestObject();
@@ -487,7 +424,7 @@ class FromPropertiesParserTest {
 			 * @since 0.1.0
 			 */
 			@Test
-			void test_indentation_collection_inline() throws Exception {
+			void test_collection_inline() throws Exception {
 				logTestStart();
 
 				EnumListTestObject object = new EnumListTestObject();
@@ -499,6 +436,42 @@ class FromPropertiesParserTest {
 				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(//
 						"        processing collection accessor FieldAccessor(name: list, type: interface java.util.List)", //
 						"            parsing inline collection from 'DEBUG,INFO'");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_fullKey() throws Exception {
+				logTestStart();
+
+				StringTestObjectTestObject object = new StringTestObjectTestObject();
+
+				parseProperties(object, "object.string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).map(String::trim))
+						.contains("value: 'abc' @ string (object.string)");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_indentation() throws Exception {
+				logTestStart();
+
+				StringTestObjectTestObject object = new StringTestObjectTestObject();
+
+				parseProperties(object, "object.string=abc");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"properties:\n    object.string=abc",
+						"○ processing accessors for StringTestObjectTestObject: [object]",
+						"            ○ processing accessors for StringTestObject: [string]");
 			}
 
 			/**
@@ -535,6 +508,33 @@ class FromPropertiesParserTest {
 				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
 						"⏷ getDataAccessors class de.voomdoon.parser.fromproperties.testobjects.StringSetterTestObject",
 						"    ⏵ method: public void de.voomdoon.parser.fromproperties.testobjects.StringSetterTestObject.setString(java.lang.String)");
+			}
+
+			/**
+			 * @since 0.1.0
+			 */
+			@Test
+			void test_recursive() throws Exception {
+				logTestStart();
+
+				InterfaceTestObject object = new InterfaceTestObject();
+
+				parseProperties(object, """
+						object.class=TestInterfaceImpl
+						object.string1=abc
+						""");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"        getRecursiveObject interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface",
+						"            getInstance interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface",
+						"                properties:\n                    string1=abc\n                    class=TestInterfaceImpl",
+						"                getClass 'TestInterfaceImpl' (interface de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterface)");
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString).filter(m -> m.startsWith(
+						"            instance: de.voomdoon.parser.fromproperties.testobjects.inheritance.TestInterfaceImpl")))
+								.hasSize(1);
 			}
 		}
 
