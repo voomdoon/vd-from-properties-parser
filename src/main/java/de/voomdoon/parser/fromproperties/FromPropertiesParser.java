@@ -344,10 +344,7 @@ public class FromPropertiesParser {
 
 			try {
 				field.set(object, v);
-			} catch (IllegalArgumentException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'setValue': " + e.getMessage(), e);
-			} catch (IllegalAccessException e) {
+			} catch (IllegalArgumentException | IllegalAccessException e) {
 				// TODO implement error handling
 				throw new RuntimeException("Error at 'setValue': " + e.getMessage(), e);
 			}
@@ -496,22 +493,8 @@ public class FromPropertiesParser {
 		private Object getInstance(Class<?> clazz) {
 			try {
 				return clazz.getConstructor().newInstance();
-			} catch (InstantiationException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'getInstance': " + e.getMessage(), e);
-			} catch (IllegalAccessException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'getInstance': " + e.getMessage(), e);
-			} catch (IllegalArgumentException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'getInstance': " + e.getMessage(), e);
-			} catch (InvocationTargetException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'getInstance': " + e.getMessage(), e);
-			} catch (NoSuchMethodException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'getInstance': " + e.getMessage(), e);
-			} catch (SecurityException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				// TODO implement error handling
 				throw new RuntimeException("Error at 'getInstance': " + e.getMessage(), e);
 			}
@@ -644,13 +627,7 @@ public class FromPropertiesParser {
 		protected void setValue(Object object, Object value) {
 			try {
 				setter.invoke(object, value);
-			} catch (IllegalAccessException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'setValue': " + e.getMessage(), e);
-			} catch (IllegalArgumentException e) {
-				// TODO implement error handling
-				throw new RuntimeException("Error at 'setValue': " + e.getMessage(), e);
-			} catch (InvocationTargetException e) {
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				// TODO implement error handling
 				throw new RuntimeException("Error at 'setValue': " + e.getMessage(), e);
 			}
