@@ -185,7 +185,7 @@ public class FromPropertiesParser {
 		 * @param properties
 		 * @since 0.1.0
 		 */
-		public Context(Properties properties, String keyPrefix) {
+		private Context(Properties properties, String keyPrefix) {
 			this.properties = properties;
 			this.keyPrefix = keyPrefix;
 		}
@@ -198,7 +198,7 @@ public class FromPropertiesParser {
 		 * @return
 		 * @since 0.1.0
 		 */
-		public Context getContext(String key, int indentation) {
+		private Context getContext(String key, int indentation) {
 			return new Context(getSubProperties(this, key, indentation), getFullKey(key));
 		}
 
@@ -209,7 +209,7 @@ public class FromPropertiesParser {
 		 * @return
 		 * @since 0.1.0
 		 */
-		public String getFullKey(String key) {
+		private String getFullKey(String key) {
 			if (keyPrefix != null) {
 				return keyPrefix + "." + key;
 			} else {
@@ -284,7 +284,7 @@ public class FromPropertiesParser {
 		 * @param field
 		 * @since 0.1.0
 		 */
-		public FieldAccessor(Field field) {
+		private FieldAccessor(Field field) {
 			this.field = field;
 		}
 
@@ -596,7 +596,7 @@ public class FromPropertiesParser {
 		 * @param setter
 		 * @since 0.1.0
 		 */
-		public SetterAccessor(Method setter) {
+		private SetterAccessor(Method setter) {
 			this.setter = setter;
 		}
 
