@@ -446,10 +446,9 @@ public class FromPropertiesParser {
 
 				result.put(keyResult, valueResult);
 			} else {
-				keyResult = getObject(context.getContext(key, indentation + 1), "key", keyTargetType, indentation + 1);
-
-				valueResult = getObject(context.getContext(key, indentation + 1), "value", valueTargetType,
-						indentation + 1);
+				Context subContext = context.getContext(key, indentation + 1);
+				keyResult = getObject(subContext, "key", keyTargetType, indentation + 1);
+				valueResult = getObject(subContext, "value", valueTargetType, indentation + 1);
 			}
 
 			log(LogLevel.DEBUG, indentation + 1, "key: " + quote(keyResult));
