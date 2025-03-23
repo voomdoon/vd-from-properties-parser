@@ -434,15 +434,15 @@ public class FromPropertiesParser {
 				int indentation, Map<Object, Object> result) throws ParseException {
 			log(LogLevel.DEBUG, indentation, "• processing map element index " + getAt(context, key));
 
-			Object value = context.properties.get(key);
-			log(LogLevel.DEBUG, indentation + 1, "value for '" + key + "': " + quote(value));
+			Object inlineValue = context.properties.get(key);
+			log(LogLevel.DEBUG, indentation + 1, "value for '" + key + "': " + quote(inlineValue));
 
 			Object keyResult;
 			Object valueResult;
 
-			if (value != null) {
+			if (inlineValue != null) {
 				keyResult = convert(keyTargetType, key, "key");
-				valueResult = convert(valueTargetType, value, "value");
+				valueResult = convert(valueTargetType, inlineValue, "value");
 
 				result.put(keyResult, valueResult);
 			} else {
@@ -452,8 +452,8 @@ public class FromPropertiesParser {
 						indentation + 1);
 			}
 
-			log(LogLevel.DEBUG, indentation + 1, "key: " + keyResult);
-			log(LogLevel.DEBUG, indentation + 1, "value: " + valueResult);
+			log(LogLevel.DEBUG, indentation + 1, "key: " + quote(keyResult));
+			log(LogLevel.DEBUG, indentation + 1, "value: " + quote(valueResult));
 
 			if (keyResult != null && valueResult != null) {
 				result.put(keyResult, valueResult);

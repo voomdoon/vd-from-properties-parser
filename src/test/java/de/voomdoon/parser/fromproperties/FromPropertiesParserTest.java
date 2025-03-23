@@ -511,6 +511,59 @@ class FromPropertiesParserTest {
 			}
 
 			/**
+			 * @since DOCME add inception version number
+			 */
+			@Test
+			void test_map_inline() throws Exception {
+				logTestStart();
+
+				String_String_MapTestObject object = new String_String_MapTestObject();
+
+				parseProperties(object, """
+						map.abc=123
+						""");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"        processing map accessor FieldAccessor(name: map, type: interface java.util.Map)",
+						"            getSubProperties @ map (map)", //
+						"            properties:\n                abc=123",
+						"        getMap class java.lang.String -> class java.lang.String @ map (map.map)",
+						"            sub-keys: [abc]", //
+						"            • processing map element index @ abc (map.abc)",
+						"                value for 'abc': '123'", //
+						"                key: 'abc'", //
+						"                value: '123'");
+			}
+
+			/**
+			 * @since DOCME add inception version number
+			 */
+			@Test
+			void test_map_keyValue() throws Exception {
+				logTestStart();
+
+				String_String_MapTestObject object = new String_String_MapTestObject();
+
+				parseProperties(object, """
+						map.0.key=abc
+						map.0.value=123
+						""");
+
+				List<LogEvent> logs = getLogCache().getLogEvents();
+
+				assertThat(logs.stream().map(LogEvent::getMessage).map(Object::toString)).containsSubsequence(
+						"        getMap class java.lang.String -> class java.lang.String @ map (map.map)",
+						"            sub-keys: [0]", //
+						"            • processing map element index @ 0 (map.0)", //
+						"                value for '0': null", //
+						"                getSubProperties @ 0 (map.0)",
+						"                    value: 'abc' @ key (map.0.key)",
+						"                    value: '123' @ value (map.0.value)");
+			}
+
+			/**
 			 * @since 0.1.0
 			 */
 			@Test
