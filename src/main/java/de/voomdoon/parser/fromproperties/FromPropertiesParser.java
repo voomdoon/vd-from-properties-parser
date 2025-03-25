@@ -108,7 +108,7 @@ public class FromPropertiesParser {
 			for (String element : elements) {
 				Object value;
 				try {
-					value = objectParser.parse((Class<?>) targetType, element);
+					value = objectParser.parse(element, (Class<?>) targetType);
 				} catch (ParseException e) {
 					// TODO implement error handling
 					throw new FromPropertiesParsingException("Error at 'parseInlineCollection': " + e.getMessage(), e);
@@ -740,7 +740,7 @@ public class FromPropertiesParser {
 		}
 
 		try {
-			return objectParser.parse((Class<?>) type, value.toString());
+			return objectParser.parse(value.toString(), (Class<?>) type);
 		} catch (NumberFormatException e) {
 			throw new NumberFormatException("Failed to parse " + type + " for '" + key + "' from '" + value + "'!");
 		} catch (ParseException e) {
