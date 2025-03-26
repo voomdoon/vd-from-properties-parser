@@ -14,7 +14,7 @@ Supports nested structures, collections, maps, interfaces (via `class` property)
   - Nested objects (recursively parsed)
   - Polymorphism (via `.class` property)
 - Works out of the box — no annotations or frameworks required
-- Extensible with custom parsers via SPI (see [`FromStringParsers`](https://github.com/your-org/from-string-parsers))
+- Extensible with custom parsers via SPI (see [vd-from-string-parser](https://github.com/voomdoon/vd-from-string-parser))
 
 ---
 
