@@ -27,13 +27,6 @@
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<!-- - - - - - internal voomdoon compile dependencies - - - - - -->
-		<!-- + + + + + external compile dependencies + + + + + -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.36</version>
-		</dependency>
-		<!-- - - - - - external compile dependencies - - - - - -->
 		<!-- - - - - - - - - - - compile dependencies - - - - - - - - - - -->
 
 		<!-- + + + + + + + + + + test dependencies + + + + + + + + + + -->
