@@ -508,7 +508,7 @@ class FromPropertiesParserTest {
 			}
 
 			/**
-			 * @since DOCME add inception version number
+			 * @since 0.1.0
 			 */
 			@Test
 			void test_map_inline() throws Exception {
@@ -535,7 +535,7 @@ class FromPropertiesParserTest {
 			}
 
 			/**
-			 * @since DOCME add inception version number
+			 * @since 0.1.0
 			 */
 			@Test
 			void test_map_keyValue() throws Exception {
@@ -561,7 +561,7 @@ class FromPropertiesParserTest {
 			}
 
 			/**
-			 * @since DOCME add inception version number
+			 * @since 0.1.0
 			 */
 			@Test
 			void test_properties_disabled() throws Exception {
@@ -580,7 +580,7 @@ class FromPropertiesParserTest {
 			}
 
 			/**
-			 * @since DOCME add inception version number
+			 * @since 0.1.0
 			 */
 			@Test
 			void test_properties_enabled() throws Exception {

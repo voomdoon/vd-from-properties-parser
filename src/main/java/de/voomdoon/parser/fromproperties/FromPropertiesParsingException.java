@@ -5,12 +5,12 @@ package de.voomdoon.parser.fromproperties;
  *
  * @author André Schulz
  *
- * @since DOCME add inception version number
+ * @since 0.1.0
  */
 public class FromPropertiesParsingException extends Exception {
 
 	/**
-	 * @since DOCME add inception version number
+	 * @since 0.1.0
 	 */
 	private static final long serialVersionUID = 7067185854430956748L;
 
@@ -18,7 +18,7 @@ public class FromPropertiesParsingException extends Exception {
 	 * DOCME add JavaDoc for constructor FromPropertiesParsingException
 	 * 
 	 * @param message
-	 * @since DOCME add inception version number
+	 * @since 0.1.0
 	 */
 	public FromPropertiesParsingException(String message) {
 		super(message);
@@ -29,7 +29,7 @@ public class FromPropertiesParsingException extends Exception {
 	 * 
 	 * @param message
 	 * @param cause
-	 * @since DOCME add inception version number
+	 * @since 0.1.0
 	 */
 	public FromPropertiesParsingException(String message, Throwable cause) {
 		super(message, cause);
