@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>de.voomdoon.logging</groupId>
 			<artifactId>vd-logging</artifactId>
-			<version>0.2.0-SNAPSHOT</version>
+			<version>0.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>de.voomdoon.parsing</groupId>
