@@ -31,6 +31,12 @@ import de.voomdoon.parser.fromstring.FromStringParsers;
 public class FromPropertiesParser {
 
 	/**
+	 * Creates a parser with the default configuration.
+	 */
+	public FromPropertiesParser() {
+	}
+
+	/**
 	 * DOCME add JavaDoc for PropertyParser
 	 *
 	 * @author André Schulz
@@ -40,13 +46,21 @@ public class FromPropertiesParser {
 	public static class ParsingConfiguration {
 
 		/**
+		 * Creates a configuration with {@link LogLevel#INFO} as default log level.
+		 */
+		public ParsingConfiguration() {
+		}
+
+		/**
 		 * @since 0.1.0
 		 */
 		private LogLevel defaultLogLevel = LogLevel.INFO;
 
 		/**
+		 * Sets the default log level.
+		 *
 		 * @param defaultLogLevel
-		 *            defaultLogLevel
+		 *            {@link LogLevel}
 		 * @since 0.1.0
 		 */
 		public void setDefaultLogLevel(LogLevel defaultLogLevel) {
@@ -699,11 +713,14 @@ public class FromPropertiesParser {
 	private RecursiveObjectProcessor recursiveObjectProcessor = new RecursiveObjectProcessor();
 
 	/**
-	 * DOCME add JavaDoc for method parse
+	 * Applies the supplied {@link Properties} to an object.
 	 * 
 	 * @param object
+	 *            object to populate
 	 * @param properties
+	 *            {@link Properties} to parse
 	 * @throws FromPropertiesParsingException
+	 *             if a property cannot be applied
 	 * @since 0.1.0
 	 */
 	public void parse(Object object, Properties properties) throws FromPropertiesParsingException {
@@ -713,8 +730,11 @@ public class FromPropertiesParser {
 	}
 
 	/**
+	 * Sets the default log level.
+	 *
 	 * @param defaultLogLevel
-	 * @return
+	 *            {@link LogLevel}
+	 * @return this {@link FromPropertiesParser}
 	 * @since 0.1.0
 	 */
 	public FromPropertiesParser setDefaultLogLevel(LogLevel defaultLogLevel) {

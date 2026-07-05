@@ -18,6 +18,7 @@ public class FromPropertiesParsingException extends Exception {
 	 * DOCME add JavaDoc for constructor FromPropertiesParsingException
 	 * 
 	 * @param message
+	 *            detail message as {@link String}
 	 * @since 0.1.0
 	 */
 	public FromPropertiesParsingException(String message) {
@@ -28,7 +29,9 @@ public class FromPropertiesParsingException extends Exception {
 	 * DOCME add JavaDoc for constructor FromPropertiesParsingException
 	 * 
 	 * @param message
+	 *            detail message as {@link String}
 	 * @param cause
+	 *            underlying {@link Throwable}
 	 * @since 0.1.0
 	 */
 	public FromPropertiesParsingException(String message, Throwable cause) {
